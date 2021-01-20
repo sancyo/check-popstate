@@ -1,32 +1,42 @@
 <template>
   <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">check-popstate</h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
+    <div class="button-1" @click="openModal()">open modal</div>
+    <div v-if="isActive" class="modal">
+      <div class="close-btn" @click="closeModal()">閉じる</div>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      isActive: false,
+    }
+  },
+  beforeMount() {
+    window.addEventListener(
+      'popstate',
+      (e) => {
+        console.log(e.state)
+      },
+      { once: true }
+    )
+  },
+  methods: {
+    back() {
+      history.back()
+    },
+    openModal() {
+      history.pushState('open', null, `/page1`)
+      this.isActive = true
+    },
+    closeModal() {
+      history.replaceState('close', null, `/`)
+      this.isActive = false
+    },
+  },
+}
 </script>
 
 <style>
@@ -39,25 +49,40 @@ export default {}
   text-align: center;
 }
 
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
+.button-1 {
+  display: inline-block;
+  padding: 0.4em 1.6em;
+  font-size: 0.8em;
+  color: #00b5ad;
+  text-decoration: none;
+  user-select: none;
+  border: 1px #00b5ad solid;
+  border-radius: 3px;
+  transition: 0.2s ease;
+  cursor: pointer;
+  background: #fff;
+  margin: 0 30px;
 }
 
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
+.button-1:hover {
+  color: #fff;
+  background: #00b5ad;
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #323232;
+  color: #fff;
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+  line-height: 100px;
+  border-radius: 8px;
+  opacity: 0.5;
 }
 
-.links {
-  padding-top: 15px;
+.close-btn {
+  cursor: pointer;
 }
 </style>
